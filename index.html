@@ -1,166 +1,113 @@
-<!doctype html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#6c4be8">
-<meta name="description" content="Una aventura didáctica para aprender jugando con Elízabeth.">
-<link rel="manifest" href="./manifest.json">
-<title>La gran aventura de Elízabeth</title>
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><title>Elízabeth y el Bosque Mágico</title><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#7ad7f0"><link rel="icon" href="icon.svg"><link rel="apple-touch-icon" href="icon.svg"><meta name="apple-mobile-web-app-capable" content="yes">
 <style>
-:root{--purple:#6c4be8;--pink:#ff6eaa;--yellow:#ffd65a;--mint:#67e7c1;--ink:#30245f;--cream:#fffaf0}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:"Trebuchet MS",system-ui,sans-serif;color:var(--ink)}
-body{background:linear-gradient(145deg,#b9f3ff,#f5dcff 48%,#fff0bd);overflow-x:hidden}
-button{font:inherit;cursor:pointer;border:0;touch-action:manipulation}
-.app{max-width:1000px;margin:auto;min-height:100dvh;padding:clamp(12px,3vw,26px);position:relative}
-.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:10px;font-weight:1000;font-size:clamp(18px,3vw,27px)}
-.logo{width:48px;height:48px;border-radius:16px;background:#fff;display:grid;place-items:center;font-size:30px;box-shadow:0 5px 0 #d6c9ff}
-.pill{background:#ffffffc9;border:2px solid #fff;border-radius:999px;padding:9px 14px;font-weight:900}
-.iconbtn{background:#fff;border-radius:50%;width:43px;height:43px;font-size:21px;box-shadow:0 4px 0 #d8caff}
-.hero,.panel{background:#ffffffdf;border:3px solid #fff;border-radius:28px;box-shadow:0 10px 0 #d9ccff;padding:clamp(16px,3vw,28px)}
-.hero{margin-top:20px;display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:center;overflow:hidden;position:relative}
-h1{font-size:clamp(30px,5vw,52px);line-height:1.03;margin:8px 0 12px;color:#5838cb}
-p{line-height:1.45}.lead{font-size:clamp(16px,2.5vw,21px);font-weight:700}
-.girl-scene{min-height:220px;display:grid;place-items:center;position:relative}
-.girl{font-size:clamp(95px,16vw,150px);filter:drop-shadow(0 8px 0 #ffd0e4);animation:bob 2s ease-in-out infinite;z-index:2}.heroine-name{position:absolute;z-index:3;bottom:0;background:#fff;border:2px solid #ffd65a;border-radius:999px;padding:6px 15px;font-weight:1000;color:#6c4be8;box-shadow:0 3px 0 #f2c2ff}
-.pet{position:absolute;font-size:clamp(45px,8vw,68px);animation:float 3s ease-in-out infinite}
-.pet.a{left:4%;bottom:12%}.pet.b{right:2%;top:8%;animation-delay:.7s}.spark{position:absolute;font-size:28px;animation:twinkle 1.5s infinite alternate}
-.s1{top:7%;left:24%}.s2{bottom:8%;right:23%;animation-delay:.4s}
-@keyframes bob{50%{transform:translateY(-10px) rotate(2deg)}}@keyframes float{50%{transform:translateY(-12px) rotate(-7deg)}}@keyframes twinkle{to{transform:scale(1.5) rotate(20deg);opacity:.45}}
-.primary{background:linear-gradient(135deg,#7654f2,#a15af1);color:#fff;font-size:20px;font-weight:1000;padding:16px 24px;border-radius:18px;box-shadow:0 6px 0 #4b32b4;transition:transform .15s}
-.primary:active,.choice:active{transform:translateY(4px);box-shadow:none}
-.secondary{background:#fff;color:var(--ink);font-weight:900;padding:12px 16px;border-radius:14px;border:2px solid #e4d9ff}
-.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:28px 0 14px}
-.section-head h2{margin:0;font-size:clamp(22px,4vw,30px)}
-.map{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.level{border:3px solid #fff;border-radius:22px;padding:14px;background:#ffffffc9;box-shadow:0 6px 0 #d9ccff;min-height:138px;text-align:left;color:var(--ink);position:relative;transition:transform .2s}
-.level:hover{transform:translateY(-4px)}.level .emoji{font-size:40px;display:block}.level strong{font-size:17px;display:block;margin:5px 0}.level small{font-weight:700}.locked{opacity:.58;filter:grayscale(.25)}.check{position:absolute;right:10px;top:10px;font-size:20px}
-.game{margin-top:20px;animation:appear .35s ease-out}@keyframes appear{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
-.gamebar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.progress{height:12px;background:#e9e1ff;border-radius:20px;overflow:hidden;flex:1;min-width:100px}.progress>div{height:100%;background:linear-gradient(90deg,#67e7c1,#ffd65a);width:0;transition:width .4s}
-.task{text-align:center;padding:clamp(18px,4vw,36px) 12px}.instruction{font-size:clamp(18px,3vw,24px);font-weight:900;margin:0 0 16px}.bigprompt{font-size:clamp(64px,14vw,120px);font-weight:1000;line-height:1.1;margin:8px}.prompt-emoji{font-size:clamp(58px,11vw,90px);animation:bob 2s infinite}
-.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:620px;margin:20px auto 0}
-.choice{min-height:100px;background:#fff;border:3px solid #e4d9ff;border-radius:22px;box-shadow:0 6px 0 #d9ccff;color:var(--ink);font-size:clamp(28px,6vw,43px);font-weight:1000;transition:transform .15s,background .2s}
-.choice .choicepic{display:block;font-size:42px;margin-bottom:5px}.choice.correct{background:#c9ffe8;border-color:#53d9a8}.choice.wrong{background:#ffe0e8;border-color:#ff8eae;animation:shake .3s}
-@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
-.feedback{min-height:48px;font-size:clamp(18px,3vw,24px);font-weight:1000;margin:18px 0 0}.feedback.good{color:#16885e}.feedback.bad{color:#c64270}
-.bottomrow{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:16px}
-.hide{display:none!important}.celebrate{font-size:65px;animation:bob 1s infinite}.foot{text-align:center;font-size:12px;opacity:.75;margin:24px 0 6px}
-@media(max-width:620px){.hero{grid-template-columns:1fr;text-align:center}.girl-scene{min-height:160px;grid-row:1}.map{grid-template-columns:repeat(2,1fr)}.level{min-height:128px}.hero .primary{width:100%}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
-</style>
-</head>
-<body>
-<div class="app">
- <header class="top">
-  <div class="brand"><div class="logo">🌈</div><span>La gran aventura<br>de Elízabeth</span></div>
-  <div style="display:flex;gap:8px;align-items:center"><span class="pill" id="starCount">⭐ 0</span><button class="iconbtn" id="soundBtn" aria-label="Activar o silenciar sonidos">🔊</button></div>
- </header>
- <main id="home">
-  <section class="hero">
-   <div><span class="pill">✨ ¡Hola, exploradora!</span><h1>¡El bosque mágico te necesita!</h1><p class="lead">Ayuda a Elízabeth y sus amigos animales a encontrar estrellas mientras aprendes jugando.</p><button class="primary" id="startBtn">🚀 ¡Comenzar aventura!</button></div>
-   <div class="girl-scene" aria-label="Elízabeth y sus amigos"><span class="spark s1">✨</span><span class="spark s2">💖</span><span class="pet a">🐰</span><span class="pet b">🦊</span><div class="girl">👧🏻</div><span class="heroine-name">ELÍZABETH 💖</span></div>
-  </section>
-  <div class="section-head"><h2>🗺️ Elige tu aventura</h2><span class="pill">A tu ritmo</span></div>
-  <section class="map" id="levelMap">
-   <button class="level" data-level="0"><span class="emoji">🔢</span><strong>1. Isla de números</strong><small>Contar del 1 al 5</small></button>
-   <button class="level locked" data-level="1"><span class="emoji">🔤</span><strong>2. Bosque de letras</strong><small>Conocer las letras</small><span class="check">🔒</span></button>
-   <button class="level locked" data-level="2"><span class="emoji">🐸</span><strong>3. Lago de sílabas</strong><small>MA, ME, MI…</small><span class="check">🔒</span></button>
-   <button class="level locked" data-level="3"><span class="emoji">🍎</span><strong>4. Huerta de sumas</strong><small>Sumar hasta 5</small><span class="check">🔒</span></button>
-   <button class="level locked" data-level="4"><span class="emoji">🌟</span><strong>5. Montaña de números</strong><small>Contar del 1 al 10</small><span class="check">🔒</span></button>
-   <button class="level locked" data-level="5"><span class="emoji">🏰</span><strong>6. Castillo de las sumas</strong><small>Sumas hasta 10</small><span class="check">🔒</span></button>
-  </section>
- </main>
- <section id="game" class="game hide">
-  <div class="gamebar"><button class="secondary" id="homeBtn">🏡 Mapa</button><div class="progress"><div id="progressFill"></div></div><span class="pill" id="roundLabel">1 / 5</span></div>
-  <div class="panel task">
-   <div class="prompt-emoji" id="friend">🐰</div>
-   <p class="instruction" id="instruction">¡Vamos a contar!</p>
-   <div class="bigprompt" id="prompt">🍎🍎</div>
-   <button class="secondary" id="hearBtn">🔊 Escuchar otra vez</button>
-   <div class="choices" id="choices"></div>
-   <div class="feedback" id="feedback" aria-live="polite"></div>
-   <div class="bottomrow"><button class="primary hide" id="nextBtn">¡Siguiente! ➜</button></div>
-  </div>
- </section>
- <section id="finish" class="panel task game hide">
-  <div class="celebrate">🏆🎉🌟</div><h1 id="finishTitle">¡Lo lograste, Elízabeth!</h1><p class="lead" id="finishText">¡Tus amigos están orgullosos de ti!</p>
-  <button class="primary" id="againBtn">🔁 Jugar otra vez</button>
-  <button class="secondary" id="mapBtn">🗺️ Volver al mapa</button>
- </section>
- <footer class="foot">Hecho con mucho cariño para Elízabeth 💜 · Puedes jugar sin conexión después de la primera carga.</footer>
-</div>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{margin:0;height:100%;overflow:hidden;font-family:"Comic Sans MS","Chalkboard SE",system-ui,sans-serif}
+body{background:linear-gradient(#7ad7f0,#c8f2c0);transition:background 1s}
+.cl{position:fixed;font-size:60px;opacity:.7;animation:drift 40s linear infinite;pointer-events:none}
+@keyframes drift{from{transform:translateX(-120px)}to{transform:translateX(110vw)}}
+.s{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;padding:env(safe-area-inset-top) 10px env(safe-area-inset-bottom);gap:8px;text-align:center}
+.s.on{display:flex;animation:var(--a,pop) .6s both}
+@keyframes pop{from{transform:scale(.3) rotate(-8deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes sl{from{transform:translateX(100vw)}to{transform:none}}
+@keyframes dr{from{transform:translateY(-100vh)}to{transform:none}}
+h1{font-size:clamp(26px,7vw,52px);margin:0;color:#fff;text-shadow:0 4px 0 #e0559c,0 8px 12px #0003}
+.b{font:inherit;font-size:clamp(28px,8vw,56px);border:0;border-radius:26px;background:#fff;padding:8px 20px;box-shadow:0 7px 0 #0002;cursor:pointer;transition:transform .15s}
+.b:active{transform:scale(.9)}
+.go{background:#ff7ab8;color:#fff;font-size:clamp(34px,9vw,60px);padding:14px 40px;animation:beat 1s infinite}
+@keyframes beat{50%{transform:scale(1.1)}}
+.av{width:clamp(80px,20vw,140px);animation:bob 2s ease-in-out infinite}
+.big .av{width:clamp(140px,35vw,240px)}
+@keyframes bob{50%{transform:translateY(-8px)}}
+.av.jump{animation:jump .6s 2}
+@keyframes jump{50%{transform:translateY(-40px) rotate(8deg)}}
+.mouth{transform-box:fill-box;transform-origin:center}
+.talk .mouth{animation:mth .2s infinite alternate}
+@keyframes mth{to{transform:scaleY(2.4)}}
+.top{display:flex;gap:10px;align-items:center;justify-content:space-between;width:min(96vw,700px)}
+.top .b{font-size:30px;padding:4px 14px}#dots{font-size:30px;letter-spacing:2px}
+.who{display:flex;align-items:center;gap:10px}.who .b{font-size:28px;padding:4px 12px}
+#gu{font-size:clamp(60px,15vw,100px);animation:bob 1.5s infinite}
+#stage{min-height:22vh;display:flex;align-items:center;justify-content:center;font-size:clamp(34px,9vw,60px)}
+.row{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:96vw;align-items:center}
+.ic{display:inline-block;animation:bob 1.4s ease-in-out infinite;cursor:pointer}
+.opt{min-width:clamp(80px,24vw,150px);font-size:clamp(44px,13vw,84px);animation:pop .5s both}
+.shake{animation:shk .4s}@keyframes shk{25%{transform:translateX(-14px)}75%{transform:translateX(14px)}}
+.hint{animation:beat .5s infinite;background:#ffe14d}.ok{background:#9bf19b}
+.map{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:12px;width:min(94vw,640px)}
+.lv{font-size:clamp(34px,9vw,52px);display:flex;flex-direction:column;align-items:center;padding:8px}
+.lv small{font-size:18px;min-height:22px}.lock{filter:grayscale(1);opacity:.6}
+.cf{position:fixed;top:-50px;font-size:34px;pointer-events:none;animation:fall 2s linear forwards;z-index:9}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+#stars{font-size:clamp(50px,14vw,100px)}
+</style></head><body>
+<div class="cl" style="top:6%;animation-delay:-5s">☁️</div><div class="cl" style="top:20%;animation-delay:-22s;font-size:90px">☁️</div><div class="cl" style="top:60%;animation-delay:-14s">🦋</div>
+
+<div class="s on big" id="home"><h1>Elízabeth<br>y el Bosque Mágico</h1><div class="avw"></div><div style="font-size:50px">🦊🐵🐸🦁🐘</div><button class="b go" onclick="start()">▶️</button></div>
+
+<div class="s" id="mapS"><div class="top"><button class="b" onclick="show('home')">🏠</button><h1 style="font-size:30px">🗺️</h1><button class="b" onclick="tm()">🎵</button></div><div class="map" id="map"></div></div>
+
+<div class="s" id="game"><div class="top"><button class="b" onclick="openMap()">🗺️</button><div id="dots"></div><button class="b" onclick="tm()">🎵</button></div>
+<div class="who"><div class="avw"></div><div id="gu"></div><button class="b" onclick="say(Q.say)">🔊</button></div>
+<div id="stage"></div><div id="opts" class="row"></div></div>
+
+<div class="s big" id="win"><div id="stars"></div><div class="avw"></div><div class="row"><button class="b go" id="nx" onclick="play(cur+1)">▶️</button><button class="b" onclick="openMap()">🗺️</button></div></div>
+
 <script>
-const $=id=>document.getElementById(id);
-let soundOn=true, levelNow=0, round=0, score=0, answered=false, current=null;
-const LEVELS=[
- {name:"Isla de números",friend:"🐰",instruction:"Cuenta las figuras y toca el número correcto.",type:"count",max:5},
- {name:"Bosque de letras",friend:"🦊",instruction:"Escucha el sonido y encuentra la letra.",type:"letter"},
- {name:"Lago de sílabas",friend:"🐸",instruction:"Escucha y busca la sílaba que dice el animal.",type:"syllable"},
- {name:"Huerta de sumas",friend:"🐻",instruction:"¡Cuenta todas las frutas! ¿Cuántas hay en total?",type:"sum",max:5},
- {name:"Montaña de números",friend:"🦉",instruction:"Cuenta con cuidado y elige el número correcto.",type:"count",max:10},
- {name:"Castillo de las sumas",friend:"🦄",instruction:"¡Resuelve la suma para abrir el castillo!",type:"sum",max:10}
-];
-const LETTERS=[["A","🦆","A de pato: aaa"],["E","🐘","E de elefante: eee"],["I","🦎","I de iguana: iii"],["O","🐻","O de oso: ooo"],["U","🦄","U de unicornio: uuu"],["M","🐵","M de mono: mmm"],["P","🐥","P de pato: ppp"],["S","🐍","S de serpiente: sss"]];
-const SYLLABLES=[["MA","🐵","MA de mamá"],["ME","🍈","ME"],["MI","🐭","MI de mimo"],["MO","🐒","MO de mono"],["MU","🐮","MU de mula"],["PA","🐥","PA"],["PE","🐧","PE"],["PI","🍕","PI"],["PO","🐙","PO"],["PU","🐣","PU"],["LA","🦁","LA"],["LO","🐺","LO"],["RE","🐸","RE"],["SA","🐍","SA"]];
-const FRUITS=["🍎","🍐","🍓","🍊","🍌","🍇","🥕","🍉"];
-let completed=JSON.parse(localStorage.getItem("eli_completed")||"[false,false,false,false,false,false]");
-let stars=Number(localStorage.getItem("eli_stars")||0);
-function save(){localStorage.setItem("eli_completed",JSON.stringify(completed));localStorage.setItem("eli_stars",String(stars));updateMap()}
-function updateMap(){ $("starCount").textContent="⭐ "+stars;document.querySelectorAll(".level").forEach((b,i)=>{const unlocked=i===0||completed[i-1]||completed[i];b.classList.toggle("locked",!unlocked);const mark=b.querySelector(".check");if(mark)mark.textContent=completed[i]?"✅":unlocked?"":"🔒";});}
-function speak(text){if(!soundOn)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang="es-CO";u.rate=.82;u.pitch=1.2;speechSynthesis.speak(u)}catch(e){}}
-let audioCtx;
-function tone(freq=660,duration=.12,type="sine"){if(!soundOn)return;try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();let o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(.001,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.12,audioCtx.currentTime+.02);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration)}catch(e){}}
-function cheer(){tone(523,.12);setTimeout(()=>tone(659,.12),100);setTimeout(()=>tone(784,.22),200)}
-function shuffle(a){return a.sort(()=>Math.random()-.5)}
-function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
-function makeQuestion(){
- const L=LEVELS[levelNow];let answer, prompt, spoken, options=[];
- if(L.type==="count"){
-  answer=1+Math.floor(Math.random()*L.max);const fruit=pick(FRUITS);prompt=Array(answer).fill(fruit).join(" ");spoken="Cuenta las figuras. ¿Cuántas hay? "+answer;
-  options=shuffle([...new Set([answer,Math.max(1,answer-1),Math.min(L.max,answer+1),1+Math.floor(Math.random()*L.max)])]).slice(0,4);
-  while(options.length<4){let n=1+Math.floor(Math.random()*L.max);if(!options.includes(n))options.push(n)}
-  current={answer,prompt,spoken,options:shuffle(options).map(n=>({label:String(n),pic:"🔢",value:n}))};
- }else if(L.type==="sum"){
-  let a=1+Math.floor(Math.random()*Math.max(2,Math.floor(L.max/2))),b=1+Math.floor(Math.random()*(L.max-a));answer=a+b;
-  prompt=`${Array(a).fill("🍎").join("")}  +  ${Array(b).fill("🍐").join("")}`;spoken=`Hay ${a} manzanas y ${b} peras. ¿Cuántas frutas hay en total?`;
-  let vals=new Set([answer,Math.max(0,answer-1),Math.min(L.max,answer+1),Math.floor(Math.random()*(L.max+1))]);options=shuffle([...vals]);while(options.length<4){let n=Math.floor(Math.random()*(L.max+1));if(!options.includes(n))options.push(n)}
-  current={answer,prompt,spoken,options:shuffle(options.slice(0,4)).map(n=>({label:String(n),pic:"✨",value:n}))};
- }else if(L.type==="letter"){
-  const item=pick(LETTERS);answer=item[0];prompt=item[1];spoken=`¿Dónde está la letra ${answer}? ${item[2]}`;
-  let opts=[answer];while(opts.length<4){let x=pick(LETTERS)[0];if(!opts.includes(x))opts.push(x)}
-  current={answer,prompt,spoken,options:shuffle(opts).map(n=>({label:n,pic:"🔠",value:n}))};
- }else{
-  const item=pick(SYLLABLES);answer=item[0];prompt=item[1];spoken=`Escucha: ${answer}. ${item[2]}. Toca ${answer}.`;
-  let opts=[answer];while(opts.length<4){let x=pick(SYLLABLES)[0];if(!opts.includes(x))opts.push(x)}
-  current={answer,prompt,spoken,options:shuffle(opts).map(n=>({label:n,pic:"🎵",value:n}))};
- }
-}
-function renderQuestion(){
- answered=false;$("nextBtn").classList.add("hide");$("feedback").textContent="";$("feedback").className="feedback";
- makeQuestion();$("friend").textContent=LEVELS[levelNow].friend;$("instruction").textContent=LEVELS[levelNow].instruction;
- $("prompt").textContent=current.prompt;$("roundLabel").textContent=`${round+1} / 5`;$("progressFill").style.width=(round/5*100)+"%";
- const holder=$("choices");holder.innerHTML="";
- current.options.forEach(opt=>{const b=document.createElement("button");b.className="choice";b.innerHTML=`<span class="choicepic">${opt.pic}</span>${opt.label}`;b.addEventListener("click",()=>choose(b,opt));holder.appendChild(b)});
- setTimeout(()=>speak(current.spoken),250);
-}
-function choose(btn,opt){
- if(answered)return;answered=true;
- if(opt.value===current.answer){score++;stars++;$("feedback").textContent=pick(["¡Muy bien, Elízabeth! ⭐","¡Lo hiciste genial! 🎉","¡Eres una exploradora brillante! 💖","¡Tus amigos celebran contigo! 🥳"]);$("feedback").className="feedback good";btn.classList.add("correct");cheer();speak("¡Muy bien!");}
- else{$("feedback").textContent="¡Casi! La respuesta correcta es "+current.answer+". ¡Vamos aprendiendo! 💜";$("feedback").className="feedback bad";btn.classList.add("wrong");tone(230,.2,"triangle");speak("La respuesta correcta es "+current.answer+". ¡Intentemos otra vez!");[...$("choices").children].forEach(b=>{if(b.textContent.trim().endsWith(String(current.answer)))b.classList.add("correct")})}
- $("progressFill").style.width=((round+1)/5*100)+"%";$("nextBtn").classList.remove("hide");save();
-}
-function startLevel(n){if(n>0&&!completed[n-1]&&!completed[n])return;levelNow=n;round=0;score=0;$("home").classList.add("hide");$("finish").classList.add("hide");$("game").classList.remove("hide");renderQuestion();window.scrollTo({top:0,behavior:"smooth"})}
-function next(){if(!answered)return;round++;if(round>=5){completed[levelNow]=true;save();$("game").classList.add("hide");$("finish").classList.remove("hide");$("finishTitle").textContent=score>=4?"¡Excelente, Elízabeth! 🏆":"¡Aventura completada, Elízabeth!";$("finishText").textContent=`Ganaste ${score} estrellas en esta aventura. ¡Cada intento te ayuda a aprender!`;cheer();speak(score>=4?"¡Excelente, Elízabeth! ¡Eres una campeona!":"¡Terminaste tu aventura! Estoy orgulloso de ti.");window.scrollTo({top:0,behavior:"smooth"})}else renderQuestion()}
-function goHome(){$("game").classList.add("hide");$("finish").classList.add("hide");$("home").classList.remove("hide");updateMap();window.scrollTo({top:0,behavior:"smooth"})}
-document.querySelectorAll(".level").forEach(b=>b.addEventListener("click",()=>startLevel(Number(b.dataset.level))));
-$("startBtn").addEventListener("click",()=>startLevel(completed.findIndex((v,i)=>!v&& (i===0||completed[i-1]))<0?0:Math.max(0,completed.findIndex((v,i)=>!v&&(i===0||completed[i-1])))));
-$("nextBtn").addEventListener("click",next);$("homeBtn").addEventListener("click",goHome);$("mapBtn").addEventListener("click",goHome);$("againBtn").addEventListener("click",()=>startLevel(levelNow));
-$("hearBtn").addEventListener("click",()=>{speak(current.spoken);tone(660,.1)});
-$("soundBtn").addEventListener("click",()=>{soundOn=!soundOn;$("soundBtn").textContent=soundOn?"🔊":"🔇";if(!soundOn&&"speechSynthesis"in window)speechSynthesis.cancel();else speak("¡Sonidos activados!")});
-updateMap();
-if("serviceWorker"in navigator && location.protocol!=="file:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}
-</script>
-</body>
-</html>
+const $=s=>document.querySelector(s),r=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),sh=a=>[...a].sort(()=>Math.random()-.5),pk=a=>a[r(0,a.length-1)];
+let AC,mus=true,lock=0,cur=0,q=0,wrong=0,qw=0,Q,tok=0,voice,
+prog=(()=>{try{return JSON.parse(localStorage.eliz)}catch(e){return{done:0,stars:{}}}})();
+const AV=`<svg viewBox="0 0 100 112" class="av"><circle cx="20" cy="46" r="13" fill="#5a3a22"/><circle cx="80" cy="46" r="13" fill="#5a3a22"/><circle cx="50" cy="52" r="31" fill="#ffd9b5"/><path d="M19 50c0-27 17-35 31-35s31 8 31 35c-10-14-21-18-31-18s-21 4-31 18z" fill="#5a3a22"/><circle cx="37" cy="56" r="4" fill="#222"/><circle cx="63" cy="56" r="4" fill="#222"/><circle cx="31" cy="66" r="5" fill="#ff9aa8" opacity=".6"/><circle cx="69" cy="66" r="5" fill="#ff9aa8" opacity=".6"/><path class="mouth" d="M41 68q9 9 18 0z" stroke="#c33" stroke-width="3" fill="#e55" stroke-linejoin="round"/><path d="M5 34l13 6-2-15zM95 34l-13 6 2-15z" fill="#ff4f9a"/><path d="M30 84h40l9 28H21z" fill="#ff7ab8"/><circle cx="50" cy="96" r="5" fill="#fff"/></svg>`;
+document.querySelectorAll('.avw').forEach(e=>e.innerHTML=AV);
+const W=[{n:'Bosque de los Números',e:'🌳',g:'🦊',gn:'el Zorrito',bg:'#9be58a',t:'num'},{n:'Selva de las Letras',e:'🌴',g:'🐵',gn:'el Monito',bg:'#ffe08a',t:'let'},{n:'Río de los Sonidos',e:'🌊',g:'🐸',gn:'la Ranita',bg:'#8fd3ff',t:'syl'},{n:'Montaña de las Sumas',e:'⛰️',g:'🦁',gn:'el León',bg:'#ffb48f',t:'sum'},{n:'Castillo Mágico',e:'🏰',g:'🐘',gn:'la Elefanta',bg:'#d9b3ff',t:'mix'}];
+const LV=[];W.forEach((w,i)=>[0,1].forEach(t=>LV.push({w:i,t})));
+// AUDIO
+function snd(f,d=.15,t='sine',v=.15,at=0){if(!AC)return;const o=AC.createOscillator(),g=AC.createGain(),n=AC.currentTime+at;o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g).connect(AC.destination);o.start(n);o.stop(n+d)}
+const ok=()=>[523,659,784,1047].forEach((f,i)=>snd(f,.25,'triangle',.2,i*.09)),
+bad=()=>{snd(260,.25,'sawtooth',.06);snd(200,.3,'sawtooth',.06,.14)},
+tap=()=>snd(700,.08,'square',.05),
+whoosh=()=>{for(let i=0;i<6;i++)snd(300+i*130,.1,'sine',.05,i*.03)},
+fan=()=>[523,523,659,784,659,784,1047,1047].forEach((f,i)=>snd(f,.3,'triangle',.2,i*.14));
+const P=[523,587,659,784,880];setInterval(()=>{if(AC&&mus)snd(pk(P),.7,'sine',.025)},700);
+function tm(){mus=!mus;document.querySelectorAll('.top .b:last-child').forEach(b=>b.textContent=mus?'🎵':'🔇')}
+// VOZ
+function pv(){const v=speechSynthesis.getVoices();voice=v.find(x=>/^es[-_](MX|US|419)/i.test(x.lang))||v.find(x=>x.lang.startsWith('es'))}
+if(window.speechSynthesis){speechSynthesis.onvoiceschanged=pv;pv()}
+function say(t,cb){const my=++tok,av=document.querySelectorAll('.av'),done=()=>{if(my!==tok)return;av.forEach(a=>a.classList.remove('talk'));cb&&cb()};
+if(!window.speechSynthesis)return setTimeout(done,900);
+speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='es-MX';if(voice)u.voice=voice;u.rate=.85;u.pitch=1.35;
+av.forEach(a=>a.classList.add('talk'));u.onend=done;u.onerror=()=>{};speechSynthesis.speak(u);setTimeout(done,t.length*110+2500)}
+// PANTALLAS
+function show(id){document.querySelectorAll('.s').forEach(e=>e.classList.remove('on'));const e=$('#'+id);e.style.setProperty('--a',pk(['pop','sl','dr']));e.classList.add('on');whoosh()}
+function conf(){for(let i=0;i<30;i++){const s=document.createElement('span');s.className='cf';s.textContent=pk(['⭐','🎉','🌸','✨','🎈','💖']);s.style.left=r(0,95)+'vw';s.style.animationDelay=Math.random()*.6+'s';document.body.appendChild(s);setTimeout(()=>s.remove(),3000)}}
+function start(){AC=new(window.AudioContext||window.webkitAudioContext)();AC.resume();show('mapS');openMap(1);say('¡Hola Elízabeth! Soy tu amigo el Zorrito. ¡Vamos de aventura por el bosque mágico! Toca el primer botón para empezar.')}
+function openMap(first){if(!first)show('mapS');document.body.style.background='linear-gradient(#7ad7f0,#c8f2c0)';
+$('#map').innerHTML=LV.map((l,i)=>`<button class="b lv ${i>prog.done?'lock':''}" onclick="play(${i})">${i>prog.done?'🔒':W[l.w].e}<span style="font-size:22px">${i+1}</span><small>${'⭐'.repeat(prog.stars[i]||0)}</small></button>`).join('');
+if(!first)say(prog.done>=LV.length?'¡Ya salvaste todo el bosque! ¡Puedes jugar otra vez!':'¿A cuál vamos ahora, Elízabeth?')}
+// PREGUNTAS
+const ICS=['🐶','🐱','🐸','🐵','🦁','🐘','🐰','🐼','🐷','🐮'],FR=['🍎','🍌','🍓','⭐','🌸','🍪'];
+const opts=(a,pool)=>sh([a,...sh(pool.filter(x=>x!==a)).slice(0,2)]);
+const rep=(e,n)=>Array.from({length:n},(_,i)=>`<span class="ic" style="animation-delay:${i*.12}s" onclick="cnt(${i+1})">${e}</span>`).join('');
+function cnt(i){tap();say(''+i)}
+const WD={A:['Abeja','🐝','a'],E:['Elefante','🐘','e'],I:['Iguana','🦎','i'],O:['Oso','🐻','o'],U:['Uva','🍇','u'],M:['Mono','🐵','eme'],P:['Pato','🦆','pe'],S:['Sapo','🐸','ese'],L:['León','🦁','ele'],T:['Tigre','🐯','te'],B:['Ballena','🐳','be'],D:['Delfín','🐬','de']};
+const GEN={
+num(t){const n=r(1,t?10:5),e=pk(ICS);return{show:`<div class="row">${rep(e,n)}</div>`,say:'Toca cada animalito y cuéntalos conmigo. ¿Cuántos hay?',o:opts(n,[1,2,3,4,5,6,7,8,9,10].filter(x=>x<=(t?10:5))),a:n}},
+let(t){const k=Object.keys(WD),L=pk(t?k:k.slice(0,5)),[w,e,nm]=WD[L];return{show:`<div style="font-size:clamp(80px,22vw,130px)">${e}</div>`,say:t?`¿Con qué letra empieza ${w}?`:`Mira, es ${w}. ${w} empieza con la ${nm}. ¿Dónde está la ${nm}?`,o:opts(L,t?k:k.slice(0,5)),a:L}},
+syl(t){const S=t?['pa','pe','pi','po','pu','la','le','li','lo','lu','sa','se','si','so','su','re','ro','ra']:['ma','me','mi','mo','mu'],s=pk(S);return{show:`<div style="font-size:clamp(70px,20vw,110px)">🔊</div>`,say:`Escucha bien. ${s}. ${s}. ¿Cuál dice ${s}?`,o:opts(s,S),a:s}},
+sum(t){const a=r(1,t?9:4),b=r(1,(t?10:5)-a),e=pk(FR),s=a+b,n=t?10:5,pool=[];for(let i=1;i<=n;i++)pool.push(i);return{show:`<div class="row">${rep(e,a)}<span>➕</span>${rep(e,b)}<span>🟰</span><span>❓</span></div>`,say:`${a} más ${b}. ¿Cuántos son en total? Toca los dibujitos para contar.`,o:opts(s,pool),a:s}},
+mix(){return GEN[pk(['num','let','syl','sum'])](1)}};
+function play(i){if(i>=LV.length)return openMap();if(i>prog.done){bad();return say('Todavía no. Primero termina los anteriores.')}
+cur=i;q=0;wrong=0;const w=W[LV[i].w];document.body.style.background=`linear-gradient(#bfeaff,${w.bg})`;$('#gu').textContent=w.g;show('game');ask(1)}
+function ask(first){lock=0;qw=0;const l=LV[cur],w=W[l.w];Q=GEN[w.t](l.t);
+$('#dots').textContent=[0,1,2,3,4].map(i=>i<q?'⭐':'⚪').join('');
+$('#stage').innerHTML=Q.show;$('#opts').innerHTML=Q.o.map((x,i)=>`<button class="b opt" style="animation-delay:${i*.12}s" onclick="pick(this,${i})">${x}</button>`).join('');
+say((first?`Bienvenida al ${w.n}. Estoy contigo con ${w.gn}. `:'')+Q.say)}
+const PR=['¡Muy bien, Elízabeth!','¡Eso es!','¡Genial, lo lograste!','¡Qué lista eres!','¡Bravo, Elízabeth!'];
+function pick(b,i){if(lock)return;if(Q.o[i]===Q.a){lock=1;b.classList.add('ok');ok();conf();const a=document.querySelector('#game .av');a.classList.add('jump');setTimeout(()=>a.classList.remove('jump'),1300);q++;say(pk(PR),()=>setTimeout(()=>q>=5?win():ask(),300))}
+else{bad();b.classList.add('shake');setTimeout(()=>b.classList.remove('shake'),400);wrong++;qw++;
+if(qw>=2){document.querySelectorAll('.opt').forEach((x,j)=>{if(Q.o[j]===Q.a)x.classList.add('hint')});say('Mira, es este. ¡Tócalo!')}else say(pk(['Casi, inténtalo otra vez.','Uy, ¡tú puedes! Prueba de nuevo.']))}}
+function win(){const s=wrong<=1?3:wrong<=3?2:1;prog.stars[cur]=Math.max(prog.stars[cur]||0,s);prog.done=Math.max(prog.done,Math.min(cur+1,LV.length));try{localStorage.eliz=JSON.stringify(prog)}catch(e){}
+$('#stars').textContent='⭐'.repeat(s);$('#nx').style.display=cur+1<LV.length?'':'none';show('win');fan();conf();setTimeout(conf,900);
+const a=document.querySelector('#win .av');a.classList.add('jump');
+say(cur===LV.length-1?'¡Salvaste el Castillo Mágico! ¡Eres la heroína del bosque, Elízabeth!':`¡Terminaste el nivel, Elízabeth! Ganaste ${s} estrellas. ¡Eres una campeona!`)}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
+</script></body></html>

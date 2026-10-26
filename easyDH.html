@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Proyector Iglesia - Reina Valera 1865</title>
+<style>
+  body{font-family:Arial,sans-serif;margin:0;background:#f0f0f0;display:flex}
+  #izq{width:320px;background:#fff;border-right:2px solid #ddd;height:100vh;overflow-y:auto;padding:15px;font-size:15px}
+  #der{flex:1;padding:20px;overflow-y:auto}
+  #c{max-width:900px;margin:0 auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 5px 20px rgba(0,0,0,0.2)}
+  input,button{padding:13px;font-size:18px;margin:8px 0;width:100%;border-radius:8px;border:none}
+  input{border:2px solid #ccc}
+  button{background:#0066cc;color:#fff;cursor:pointer;font-weight:bold}
+  .p{background:#28a745}
+  .libro{font-weight:bold;color:#0066cc;cursor:pointer;padding:12px;background:#f0f8ff;margin:5px 0;border-radius:8px;text-align:center}
+  .capitulo{cursor:pointer;padding:10px 15px;margin:4px 0;background:#e3f2fd;border-radius:6px}
+  .vers{cursor:pointer;padding:12px;margin:5px 0;background:#f9f9f9;border-left:5px solid #0066cc;border-radius:6px}
+  #r{margin-top:15px;padding:15px;background:#f9f9f9;border-radius:8px;max-height:60vh;overflow-y:auto}
+  #s{position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;color:#fff;font-size:7vw;display:flex;align-items:center;justify-content:center;text-align:center;padding:5%;line-height:2;display:none;z-index:99}
+  .x{position:fixed;top:15px;right:15px;padding:15px 28px;font-size:40px;background:#c00;color:#fff;border-radius:50%;display:none;z-index:100;cursor:pointer}
+  .ok{color:green;font-weight:bold;text-align:center;font-size:22px;margin:10px 0}
+</style>
+</head>
+<body>
+
+<div id="izq">
+  <h3 style="text-align:center;color:#0066cc;margin:10px 0">Libros de la Biblia</h3>
+  <div id="lista-libros">Cargando libros...</div>
+</div>
+
+<div id="der">
+  <div id="c">
+    <h1 style="text-align:center;color:#0066cc">Proyector Iglesia - Reina Valera 1909</h1>
+    <div id="status" class="ok">Cargando Biblia completa...</div>
+    <input type="text" id="q" placeholder="Juan 3:16 | Salmos 23 | amor | padre nuestro" autofocus>
+    <button onclick="buscar()">Buscar en toda la Biblia</button>
+    <button class="p" onclick="proyectar()">Proyectar (F11)</button>
+    <div id="r"></div>
+  </div>
+</div>
+
+<div id="s" onclick="cerrar()"><div id="t"></div></div>
+<button class="x" onclick="cerrar()">X</button>
+
+<script>
+let biblia = {};
+let books = [];
+
+// 🔥 CARGA CORRECTA DE SPA_RV.json (misma carpeta)
+fetch("RV1960_COMPLETA.json?" + Date.now())
+  .then(r => r.json())
+  .then(json => cargarBiblia(json))
+  .catch(err => {
+    console.error(err);
+    document.getElementById("status").innerHTML = "Error cargando SPA_RV.json";
+  });
+
+function cargarBiblia(json) {
+  books = json.books;
+  const lista = document.getElementById("lista-libros");
+  lista.innerHTML = "";
+
+  // Mostrar libros
+  books.forEach((libro, i) => {
+    const div = document.createElement("div");
+    div.className = "libro";
+    div.textContent = libro.name;
+    div.onclick = () => mostrarCapitulos(i);
+    lista.appendChild(div);
+  });
+
+  // Construir índice bíblico para búsqueda rápida
+  let contador = 0;
+  books.forEach(libro => {
+    libro.chapters.forEach(cap => {
+      cap.verses.forEach(v => {
+        const ref = `${libro.name} ${cap.chapter}:${v.verse}`;
+        biblia[ref] = v.text;
+        biblia[ref.toLowerCase()] = v.text;
+        contador++;
+      });
+    });
+  });
+
+  document.getElementById("status").innerHTML =
+    `¡BIBLIA CARGADA! ${contador.toLocaleString()} versículos listos`;
+}
+
+function mostrarCapitulos(i) {
+  const libro = books[i];
+  const lista = document.getElementById("lista-libros");
+
+  lista.innerHTML =
+    `<div class="libro" onclick="location.reload()" style="background:#0066cc;color:#fff">← ${libro.name}</div>`;
+
+  libro.chapters.forEach(cap => {
+    const div = document.createElement("div");
+    div.className = "capitulo";
+    div.textContent = `Capítulo ${cap.chapter}`;
+    div.onclick = () => mostrarVersiculos(libro.name, cap.chapter, cap.verses);
+    lista.appendChild(div);
+  });
+}
+
+function mostrarVersiculos(nombre, cap, versiculos) {
+  const r = document.getElementById("r");
+  r.innerHTML = `<h3 style="color:#0066cc;margin:10px 0">${nombre} ${cap}</h3>`;
+
+  versiculos.forEach(v => {
+    const ref = `${nombre} ${cap}:${v.verse}`;
+    r.innerHTML += `<div class="vers" onclick="ver('${ref}')"><b>${v.verse}</b> ${v.text}</div>`;
+  });
+}
+
+function buscar() {
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const r = document.getElementById("r");
+  r.innerHTML = "";
+
+  if (!q) return;
+
+  let resultados = [];
+  for (let ref in biblia) {
+    if (ref.toLowerCase().includes(q) || biblia[ref].toLowerCase().includes(q)) {
+      resultados.push(ref);
+      if (resultados.length > 120) break;
+    }
+  }
+
+  if (resultados.length === 0) {
+    r.innerHTML = "<i>No encontrado</i>";
+    return;
+  }
+
+  resultados.forEach(ref => {
+    r.innerHTML += `<div class="vers" onclick="ver('${ref}')">
+      <b>${ref}</b><br>${biblia[ref]}
+    </div>`;
+  });
+}
+
+function ver(ref) {
+  document.getElementById("t").innerHTML =
+    `<div style="font-size:1.5em;color:#ff0">${ref}</div><br>${biblia[ref]}`;
+  mostrar();
+}
+
+function proyectar() {
+  document.getElementById("t").innerHTML =
+    document.getElementById("r").innerHTML;
+  mostrar();
+}
+
+function mostrar() {
+  document.getElementById("s").style.display = "flex";
+  document.querySelector(".x").style.display = "block";
+}
+
+function cerrar() {
+  document.getElementById("s").style.display = "none";
+  document.querySelector(".x").style.display = "none";
+}
+
+document.getElementById("q").addEventListener("keypress", e => {
+  if (e.key === "Enter") buscar();
+});
+</script>
+
+</body>
+</html>
+
