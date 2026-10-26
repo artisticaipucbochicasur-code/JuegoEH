@@ -63,7 +63,7 @@ function pad(a,pool,n=3){return sh([a,...sh(pool.filter(x=>x!=a)).slice(0,n-1)])
 function mk(t){if(t=='S'){const s=SYL[R(SYL.length)];return{say:`Salta debajo del bloque que dice ${s}. ${s}, ${s}.`,pv:`${s} 🔊`,o:pad(s,SYL).map(x=>({h:x,k:x})),a:s}}
 if(t=='N'){const a=1+R(8),b=1+R(Math.min(9-a,5)),e=['🍎','🌰','⭐','🍓'][R(4)],n=a+b;return{say:`¿Cuánto es ${a} más ${b}? Salta debajo del bloque con la respuesta.`,pv:`${e.repeat(a)} ➕ ${e.repeat(b)}`,o:pad(n,[1,2,3,4,5,6,7,8,9,10].filter(x=>Math.abs(x-n)<4)).map(x=>({h:x+`<small>${'●'.repeat(x)}</small>`,k:x})),a:n}}
 const c=COL[R(6)];return{say:`Salta debajo del bloque de color ${c[0]}.`,pv:'🎨',o:pad(c[0],COL.map(x=>x[0])).map(x=>({h:'',bg:COL.find(y=>y[0]==x)[1],k:x})),a:c[0]}}
-function size(){W=$('#stage').clientWidth;H=$('#stage').clientHeight;G=$('#gr').clientHeight;GH=Math.min(H*.3,210);GW=GH*152/340;const p=$('#pl');p.style.width=GW+'px';p.style.height=GH+'px'}
+function size(){W=$('#stage').clientWidth;H=$('#stage').clientHeight;G=$('#gr').clientHeight;GH=Math.min(H*.3,210);GW=GH*152/340;const p=$('#pl');if(p){p.style.width=GW+'px';p.style.height=GH+'px'}}
 function build(){size();const NZ=12,S=1250;zones=[];let h='';
 for(let L=0;L<4;L++){const ty=sh(['S','N','C']);ty.forEach((t,j)=>{const k=L*3+j,x=1300+k*S,ch=mk(t);zones.push({k,x,ch,done:0,sp:0,L,bl:[]})})}
 endX=zones[11].x+1000;const end=endX+W;
