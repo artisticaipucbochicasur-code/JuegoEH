@@ -101,7 +101,21 @@ html,body{height:100%;margin:0;overflow:hidden;background:#5cb8f0;font-family:"T
 #stage.pixel #gr{background:repeating-linear-gradient(90deg,#c84c0c 0 32px,#e45c10 32px 64px);height:16%;border-top:4px solid #00a800}
 #stage.pixel #gr::before,#stage.pixel #gr::after{display:none}
 #stage.pixel #cl{background-image:radial-gradient(ellipse 40px 20px at 50px 30px,#fff 70%,transparent 72%);background-size:200px 100%}
-.stp.float{box-shadow:0 8px 16px #0003;border-radius:12px}
+.stp.float{
+  background:linear-gradient(180deg,#b9e8ff 0%,#82c9ee 55%,#5ca6d4 100%);
+  border:2px solid #e5f7ff;
+  box-sizing:border-box;
+  box-shadow:0 8px 16px #0003,inset 0 3px 0 #ffffffaa;
+  border-radius:12px;
+}
+.stp.float::before{
+  content:"";
+  position:absolute;
+  left:10%;right:10%;top:5px;height:5px;
+  border-radius:8px;
+  background:#ffffff88;
+  pointer-events:none;
+}
 </style></head><body><div id="stage">
 <div id="cl"></div><div id="hl"></div><div id="world"></div><div id="gr"></div>
 <div id="ctl"><div><button aria-label="Atrás" id="bl"><svg viewbox="0 0 24 24"><path d="M15 5l-7 7 7 7"></path></svg></button><button aria-label="Adelante" id="br"><svg viewbox="0 0 24 24"><path d="M9 5l7 7-7 7"></path></svg></button></div><div><button aria-label="Abajo" id="bd"><svg viewbox="0 0 24 24"><path d="M5 9l7 7 7-7"></path></svg></button><button aria-label="Arriba" id="bu"><svg viewbox="0 0 24 24"><path d="M5 15l7-7 7 7"></path></svg></button><button aria-label="Disparar" id="bshoot" hidden>💥</button></div></div><div hidden="" id="panel"><div id="pv"></div><button aria-label="Escuchar otra vez" id="rep">🔊</button></div><div id="hud">🍌 0</div><div class="pwr" id="pwr"></div><div hidden="" id="ban"></div><div hidden="" id="over"><h1>¡Casi! 💪</h1><button class="go" id="again">Intentar otra vez</button></div><div hidden id="victory" aria-live="polite"><div class="victory-card"><div class="victory-crown">👑</div><h1>¡NIVEL SUPERADO!</h1><div class="victory-stars">⭐ ✨ 🏆 ✨ ⭐</div><p>¡Lo hiciste increíble, Elízabeth!</p></div></div>
@@ -161,7 +175,7 @@ qt(L).forEach((t,k)=>zones.push({k,x:1300+k*1400,ch:mk(t,L),done:0,sp:0,bl:[]}))
 for(let x=40;x<end;x+=150+R(110)){const s=110+R(110);if(sea){h+=`<span class="st" style="left:${x}px;font-size:${s*.55}px">${R(2)?'🪸':'🌿'}</span>`}else{trees.push({x:x+s*.35,sw:0});h+=TREE(s).replace('class="t"',`class="t" style="left:${x}px"`)}}
 for(let x=100;x<end;x+=230+R(120))h+=`<span class="st" style="left:${x}px;font-size:34px">${(sea?['🐚','🦀','🌿','🪸']:['🌼','🍄','🌷','🌿'])[R(4)]}</span>`;
 const bb=GH+26,pc=(x,hc)=>{coins.push({x,hc,on:1});h+=`<span class="c" id="c${coins.length-1}" style="left:${x-19}px;bottom:calc(var(--g) - 10px + ${hc}px)">${fr}</span>`};
-const stp=(x1,x2,hh,typ='grass')=>{const s={x1,x2,h:hh};if(typ==='mystery')s.mystery=1;if(typ==='mush')s.bounce=1;steps.push(s);h+=`<div class="stp ${typ}" style="left:${x1}px;width:${x2-x1}px;height:${hh}px;bottom:calc(var(--g) - 10px)">${typ==='mystery'?'?':''}</div>`};
+const stp=(x1,x2,hh,typ='grass')=>{const s={x1,x2,h:Math.max(0,hh-10)};if(typ==='mystery')s.mystery=1;if(typ==='mush')s.bounce=1;steps.push(s);h+=`<div class="stp ${typ}" style="left:${x1}px;width:${x2-x1}px;height:${hh}px;bottom:calc(var(--g) - 10px)">${typ==='mystery'?'?':''}</div>`};
 zones.forEach(z=>{h+=`<span class="st" id="a${z.k}" style="left:${z.x+300}px">${(sea?SA:ANI)[(L+z.k)%12]}</span>`;const hs=sea?sh([.14,.36,.58]).map(f=>f*(H-G)):[bb,bb,bb];z.ch.o.forEach((o,j)=>{const bx=z.x+(j-1)*150,by=hs[j];z.bl.push({bx,by,o,dead:0,id:`b${z.k}_${j}`});h+=`<div class="blk${o.c?' o':''}" id="b${z.k}_${j}" style="left:${bx-39}px;bottom:calc(var(--g) - 10px + ${by}px);animation-delay:${j*.2}s;${o.bg?'background:'+o.bg:''}">${o.h}</div>`});
 if(!sea&&!car){
 const types=['grass','rock','log','mush','stump'];
@@ -246,10 +260,38 @@ const floorAt=x=>{let f=0,bnc=0,mys=null;const half=(typeof PW==='number'?PW*.22
 const onG=()=>gy<=floorAt(px).h+.5&&vy<=0;
 function mv(dx){if(!dx)return 0;const nx=Math.max(40,Math.min(wall,px+dx));if(nx===px)return 0;const half=(typeof PW==='number'?PW*.22:10);let obstacleTop=0;for(const s of steps)if(s.x1<=nx+half&&s.x2>=nx-half&&s.h>obstacleTop)obstacleTop=s.h;if(obstacleTop>gy+8)return 0;const f2=floorAt(nx).h;const g=onG();px=nx;if(g&&f2>gy)gy=f2;return 1}
 function jump(){if(mode!='play')return;if(canShoot && !onG()){shoot();return}if(onG()&&!K.d){const mul=superJump?2.2:1;vy=Math.sqrt(2*2300*GH*.75*mul);JMP();if(superJump)fx(['🍄','✨'],8,px-cam,H-G-gy)}}
-function shoot(){if(!canShoot||mode!='play')return;const p=document.createElement('span');p.className='proj';p.textContent='💫';p.style.left=(px-cam+face*PW*.4)+'px';p.style.bottom=(G+gy+PH*.52)+'px';$('#stage').appendChild(p);const startX=px,dir=face;let life=1,previousX=startX;
-const iv=setInterval(()=>{life-=.05;const nx=startX+dir*(1-life)*560;p.style.left=(nx-cam)+'px';let struck=false;
-enemies.forEach(e=>{if(!e.dead&&((e.x>=Math.min(previousX,nx)-24)&&(e.x<=Math.max(previousX,nx)+24))){e.dead=1;struck=true;const el=$('#'+e.id);if(el){el.classList.add('dead');setTimeout(()=>el.remove(),500)}score+=1;hud();COIN();fx(['💥','⭐'],8,e.x-cam,H-G-20)}});previousX=nx;
-if(struck||life<=0){clearInterval(iv);p.remove()}},30);snd([800,1200],0.06,'square')}
+function shoot(){
+if(!canShoot||mode!='play')return;
+// Los animales caminan por el suelo: el disparo sale a su altura,
+// no a la altura del pecho/cabeza del personaje cuando está saltando.
+const dir=face||1,originX=px+dir*PW*.35;
+const ahead=enemies.filter(e=>!e.dead&&(e.x-originX)*dir>=-8)
+  .sort((a,b)=>Math.abs(a.x-originX)-Math.abs(b.x-originX));
+const target=ahead[0]||null;
+const p=document.createElement('span');p.className='proj';p.textContent='💫';
+const shotY=G+18;
+p.style.left=(originX-cam)+'px';p.style.bottom=shotY+'px';
+$('#stage').appendChild(p);
+const startX=originX;let life=1,previousX=startX;
+const iv=setInterval(()=>{
+ life-=.05;
+ const nx=startX+dir*(1-life)*560;
+ p.style.left=(nx-cam)+'px';
+ let struck=false;
+ enemies.forEach(e=>{
+   if(e.dead||(e.x-originX)*dir < -8)return;
+   // Hitbox centrada en el cuerpo del animal, no en una zona alta del escenario.
+   if(e.x>=Math.min(previousX,nx)-20&&e.x<=Math.max(previousX,nx)+20){
+     e.dead=1;struck=true;const el=$('#'+e.id);
+     if(el){el.classList.add('dead');setTimeout(()=>el.remove(),500)}
+     score+=1;hud();COIN();fx(['💥','⭐'],8,e.x-cam,H-G-20);
+   }
+ });
+ previousX=nx;
+ if(struck||life<=0){clearInterval(iv);p.remove()}
+},30);
+snd([800,1200],0.06,'square')
+}
 function hit(z,b){const el=$('#'+b.id),an=$('#a'+z.k),ok=String(b.o.k)==String(z.ch.a),sx=b.bx-cam,sy=H-G-(b.by||0)-20;BUMP();
 if(ok){z.done=1;score+=2;hud();el.classList.add('good');z.bl.forEach(o=>{if(o!=b)$('#'+o.id).classList.add('dead')});WIN();fx(['⭐','🎉',FRU[LV],'✨'],24,sx,sy);an.classList.add('a');setTimeout(()=>an.classList.remove('a'),1300);say(['¡Muy bien!','¡Lo lograste!','¡Eso es!','¡Qué bien!','¡Genial!'][R(5)]);if(!sea&&!car)vy=700;panel.hidden=true}
 else{b.dead=1;el.classList.add('bad','dead');setTimeout(()=>el.classList.remove('bad'),500);
