@@ -257,7 +257,14 @@ html,body{height:100%;margin:0;overflow:hidden;background:#5cb8f0;font-family:"T
 @media (prefers-reduced-motion:reduce){#splash *,#intro *{animation-duration:.01s!important;animation-delay:0s!important;animation-iteration-count:1!important}}
 
 .generated-avatar-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0}.generated-avatar-grid .player-image-preview{height:94px;margin:0}.generated-avatar-grid .player-image-preview img{height:90px;width:100%;object-fit:contain}
-#pi.custom-upload:not(.idle-frozen){animation:customAvatarMove .22s ease-in-out infinite alternate;transform-origin:50% 100%}@keyframes customAvatarMove{from{margin-top:0;filter:drop-shadow(0 4px 2px #0003)}to{margin-top:-3px;filter:drop-shadow(0 6px 3px #0003)}}
+#pi.custom-upload:not(.idle-frozen){animation:customAvatarWalk .24s ease-in-out infinite alternate;transform-origin:50% 100%}
+#pi.custom-upload.mode-swim:not(.idle-frozen){animation:customAvatarSwim .52s ease-in-out infinite alternate;transform-origin:50% 55%}
+#pi.custom-upload.mode-car:not(.idle-frozen){animation:customAvatarDrive .12s linear infinite alternate;transform-origin:50% 100%}
+#pi.custom-upload.mode-road:not(.idle-frozen){animation:customAvatarRoad .16s ease-in-out infinite alternate;transform-origin:50% 50%}
+@keyframes customAvatarWalk{from{margin-top:0;filter:drop-shadow(0 4px 2px #0003)}to{margin-top:-5px;filter:drop-shadow(0 7px 3px #0003);transform:rotate(-2deg)}}
+@keyframes customAvatarSwim{from{margin-top:2px;transform:rotate(-4deg) translateY(0)}to{margin-top:-3px;transform:rotate(4deg) translateY(-4px)}}
+@keyframes customAvatarDrive{from{transform:translateY(0) rotate(-.7deg)}to{transform:translateY(-1.5px) rotate(.7deg)}}
+@keyframes customAvatarRoad{from{filter:drop-shadow(0 2px 2px #0004);transform:translateY(-1px)}to{filter:drop-shadow(0 5px 4px #0005);transform:translateY(2px)}}
 
 /* ===== Personalización local del juego ===== */
 #settings{position:absolute;inset:0;z-index:45;display:flex;align-items:center;justify-content:center;padding:14px;background:#132c32b8;backdrop-filter:blur(5px)}
@@ -579,24 +586,51 @@ async function savePlayerImage(data,modeKey){const db=await openImageDB();return
 async function loadPlayerImage(modeKey='walk'){try{const db=await openImageDB();return await new Promise((resolve,reject)=>{const tx=db.transaction('assets','readonly'),req=tx.objectStore('assets').get('custom-'+modeKey);req.onsuccess=()=>{const val=req.result||null;db.close();resolve(val)};req.onerror=()=>{db.close();reject(req.error)}})}catch(e){return null}}
 async function deletePlayerImage(modeKey){try{const db=await openImageDB();await new Promise((resolve,reject)=>{const tx=db.transaction('assets','readwrite');tx.objectStore('assets').delete('custom-'+modeKey);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});db.close()}catch(e){}}
 function currentPlayerMode(){return mode==='road'?'road':sea?'swim':car?'car':'walk'}
-function applyPlayerConfig(){const pi=$('#pi');if(!pi)return;activePlayerMode=currentPlayerMode();const modeKey=activePlayerMode,has=!!GAMECFG.images[modeKey];pi.classList.toggle('custom-char',!!GAMECFG.character&&!has);pi.dataset.character=GAMECFG.character||'';let img=pi.querySelector('.player-upload-image'),freeze=pi.querySelector('.player-upload-freeze');if(has){pi.classList.add('custom-upload');if(!img){img=document.createElement('img');img.className='player-upload-image';img.alt='Personaje personalizado';img.draggable=false;pi.appendChild(img)}if(!freeze){freeze=document.createElement('canvas');freeze.className='player-upload-freeze';freeze.setAttribute('aria-hidden','true');pi.appendChild(freeze)}const applySrc=src=>{if(!src||!img.isConnected)return;img.onload=()=>{if(pi.classList.contains('idle-frozen'))freezeCustomFrame(pi)};if(img.src!==src)img.src=src;else if(pi.classList.contains('idle-frozen'))freezeCustomFrame(pi)};if(pendingImages[modeKey])applySrc(pendingImages[modeKey]);else loadPlayerImage(modeKey).then(applySrc)}else{pi.classList.remove('custom-upload','idle-frozen');if(img)img.remove();if(freeze)freeze.remove()}}
+function applyPlayerConfig(){const pi=$('#pi');if(!pi)return;activePlayerMode=currentPlayerMode();const modeKey=activePlayerMode,has=!!GAMECFG.images[modeKey];['mode-walk','mode-swim','mode-car','mode-road'].forEach(c=>pi.classList.remove(c));pi.classList.add('mode-'+modeKey);pi.classList.toggle('custom-char',!!GAMECFG.character&&!has);pi.dataset.character=GAMECFG.character||'';let img=pi.querySelector('.player-upload-image'),freeze=pi.querySelector('.player-upload-freeze');if(has){pi.classList.add('custom-upload');if(!img){img=document.createElement('img');img.className='player-upload-image';img.alt='Personaje personalizado';img.draggable=false;pi.appendChild(img)}if(!freeze){freeze=document.createElement('canvas');freeze.className='player-upload-freeze';freeze.setAttribute('aria-hidden','true');pi.appendChild(freeze)}const applySrc=src=>{if(!src||!img.isConnected)return;img.onload=()=>{if(pi.classList.contains('idle-frozen'))freezeCustomFrame(pi)};if(img.src!==src)img.src=src;else if(pi.classList.contains('idle-frozen'))freezeCustomFrame(pi)};if(pendingImages[modeKey])applySrc(pendingImages[modeKey]);else loadPlayerImage(modeKey).then(applySrc)}else{pi.classList.remove('custom-upload','idle-frozen');if(img)img.remove();if(freeze)freeze.remove()}}
 function freezeCustomFrame(pi){const img=pi&&pi.querySelector('.player-upload-image'),cv=pi&&pi.querySelector('.player-upload-freeze');if(!img||!cv||!img.complete||!img.naturalWidth)return;const w=img.naturalWidth,h=img.naturalHeight;cv.width=w;cv.height=h;try{cv.getContext('2d').drawImage(img,0,0,w,h)}catch(e){}}
 function syncCustomAnimation(moving){const pi=$('#pi');if(!pi||!GAMECFG.images[currentPlayerMode()])return;if(moving){pi.classList.remove('idle-frozen')}else{const img=pi.querySelector('.player-upload-image');if(img&&img.complete&&img.naturalWidth){freezeCustomFrame(pi);pi.classList.add('idle-frozen')}}}
 let facePhotoData=null;
 $('#playerFace').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(!f)return;if(!/^image\/(png|jpeg|webp)$/.test(f.type)){alert('Elige una foto JPG, PNG o WebP.');e.target.value='';return}if(f.size>8*1024*1024){alert('La foto debe pesar máximo 8 MB.');e.target.value='';return}const r=new FileReader();r.onload=()=>{facePhotoData=String(r.result);const box=$('#previewFace');box.innerHTML='';const im=document.createElement('img');im.src=facePhotoData;im.alt='Foto seleccionada';box.appendChild(im);box.hidden=false;$('#faceGenStatus').textContent='Foto cargada. Pulsa «Crear los 4 personajes».'};r.onerror=()=>alert('No se pudo leer la foto.');r.readAsDataURL(f)});
 function drawFaceCrop(ctx,img,cx,cy,r){ctx.save();ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.clip();const side=Math.min(img.naturalWidth,img.naturalHeight),sx=(img.naturalWidth-side)/2,sy=(img.naturalHeight-side)/2;ctx.drawImage(img,sx,sy,side,side,cx-r,cy-r,r*2,r*2);ctx.restore();ctx.lineWidth=7;ctx.strokeStyle='#fff4cf';ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke()}
-function makeLocalAvatar(img,kind){const c=document.createElement('canvas');c.width=256;c.height=320;const x=c.getContext('2d');x.clearRect(0,0,256,320);x.lineCap='round';x.lineJoin='round';
- if(kind==='walk'||kind==='swim'){// torso and limbs are reusable local vector templates
-  x.strokeStyle='#f2b58b';x.lineWidth=18;x.beginPath();x.moveTo(112,178);x.lineTo(78,215);x.moveTo(144,178);x.lineTo(177,207);x.stroke();
-  x.strokeStyle='#354b88';x.lineWidth=22;x.beginPath();x.moveTo(119,226);x.lineTo(105,276);x.moveTo(139,226);x.lineTo(158,274);x.stroke();
-  x.fillStyle=kind==='swim'?'#12a9c7':'#4b9c4b';x.beginPath();x.roundRect(87,153,82,83,23);x.fill();
-  if(kind==='swim'){x.strokeStyle='#e7faff';x.lineWidth=4;for(let i=0;i<4;i++){x.beginPath();x.arc(35+i*18,263+(i%2)*18,5,0,Math.PI*2);x.stroke()}x.fillStyle='#e5f8ff';x.font='24px sans-serif';x.fillText('〰',164,118)}
-  drawFaceCrop(x,img,128,91,48);
- }else{ // draw car with the user's face as the driver
-  x.fillStyle=kind==='road'?'#ec4d64':'#ffb52e';x.beginPath();x.moveTo(23,220);x.lineTo(43,170);x.quadraticCurveTo(50,153,76,153);x.lineTo(163,153);x.quadraticCurveTo(184,153,202,190);x.lineTo(232,205);x.lineTo(238,238);x.lineTo(18,238);x.closePath();x.fill();
-  x.fillStyle='#8de5f5';x.beginPath();x.moveTo(81,163);x.lineTo(151,163);x.lineTo(174,192);x.lineTo(72,192);x.closePath();x.fill();
-  x.fillStyle='#292c3c';for(const xx of [63,194]){x.beginPath();x.arc(xx,237,22,0,Math.PI*2);x.fill();x.fillStyle='#dfe8f0';x.beginPath();x.arc(xx,237,9,0,Math.PI*2);x.fill();x.fillStyle='#292c3c'}
-  drawFaceCrop(x,img,122,130,33);x.fillStyle='#fff';x.font='bold 16px sans-serif';x.fillText(kind==='road'?'RACE':'GO!',99,215)
+function makeLocalAvatar(img,kind){
+ const c=document.createElement('canvas');c.width=256;c.height=320;const x=c.getContext('2d');x.clearRect(0,0,256,320);x.lineCap='round';x.lineJoin='round';
+ if(kind==='walk'||kind==='swim'){
+  // Full-body child; color and pose are distinct for walking and swimming.
+  if(kind==='walk'){
+   x.strokeStyle='#f2b58b';x.lineWidth=17;x.beginPath();x.moveTo(108,170);x.lineTo(73,202);x.moveTo(148,170);x.lineTo(181,191);x.stroke();
+   x.strokeStyle='#354b88';x.lineWidth=22;x.beginPath();x.moveTo(113,221);x.lineTo(86,268);x.lineTo(63,278);x.moveTo(143,221);x.lineTo(164,256);x.lineTo(190,259);x.stroke();
+   x.fillStyle='#4b9c4b';x.beginPath();x.roundRect(85,145,86,91,25);x.fill();
+   x.fillStyle='#f6f0d5';x.beginPath();x.ellipse(66,281,17,8,-.2,0,Math.PI*2);x.ellipse(193,263,17,8,.1,0,Math.PI*2);x.fill();
+   drawFaceCrop(x,img,128,89,47);
+  }else{
+   // Horizontal swimming pose with arms out and bubbles.
+   x.save();x.translate(128,176);x.rotate(-.05);x.strokeStyle='#f2b58b';x.lineWidth=16;x.beginPath();x.moveTo(-10,-8);x.lineTo(-77,-39);x.moveTo(8,-8);x.lineTo(78,-34);x.stroke();
+   x.strokeStyle='#174b9c';x.lineWidth=22;x.beginPath();x.moveTo(-5,34);x.lineTo(-59,62);x.lineTo(-82,51);x.moveTo(7,34);x.lineTo(56,63);x.lineTo(80,49);x.stroke();
+   x.fillStyle='#12a9c7';x.beginPath();x.roundRect(-43,-22,86,85,25);x.fill();
+   drawFaceCrop(x,img,0,-69,43);x.restore();
+   x.strokeStyle='#e7faff';x.lineWidth=4;[[36,72,8],[206,113,6],[44,235,5],[214,221,8],[180,61,4]].forEach(([bx,by,r])=>{x.beginPath();x.arc(bx,by,r,0,Math.PI*2);x.stroke()});
+   x.fillStyle='#e5f8ff';x.font='26px sans-serif';x.fillText('〰',163,278);
+  }
+ }else{
+  // Vehicle drawn from directly above, with the face visible through the front windshield.
+  x.save();x.translate(128,164);
+  const body=kind==='road'?'#ec4d64':'#ffb52e',dark=kind==='road'?'#a92b46':'#c87912';
+  // Wheels at left/right, clearly top-down
+  x.fillStyle='#252b38';[[ -76,-76],[76,-76],[-76,68],[76,68]].forEach(([wx,wy])=>{x.beginPath();x.roundRect(wx-14,wy-25,28,50,8);x.fill()});
+  // Car body silhouette
+  x.fillStyle=dark;x.beginPath();x.roundRect(-78,-142,156,278,38);x.fill();
+  x.fillStyle=body;x.beginPath();x.roundRect(-70,-150,140,278,34);x.fill();
+  // Front lights and front windshield at the top of the image
+  x.fillStyle='#fff6a8';x.beginPath();x.roundRect(-57,-143,28,12,5);x.roundRect(29,-143,28,12,5);x.fill();
+  x.fillStyle='#9de9fb';x.beginPath();x.roundRect(-51,-111,102,64,15);x.fill();
+  x.fillStyle='#ffffff80';x.fillRect(-39,-101,78,6);
+  // Face peeks through the windshield
+  drawFaceCrop(x,img,0,-79,25);
+  x.fillStyle='#72cfe8';x.beginPath();x.roundRect(-53,8,106,57,13);x.fill();
+  x.fillStyle='#ffffff70';x.fillRect(-39,17,78,5);
+  x.fillStyle='#252b38';x.beginPath();x.roundRect(-42,83,84,20,8);x.fill();
+  x.fillStyle='#fff';x.font='bold 15px sans-serif';x.textAlign='center';x.fillText(kind==='road'?'RACE':'GO!',0,115);
+  x.restore();
  }
  return c.toDataURL('image/png')}
 $('#generateFaceAvatars').addEventListener('click',async()=>{if(!facePhotoData){alert('Primero selecciona una foto de la cara.');return}const status=$('#faceGenStatus');status.textContent='Creando las cuatro versiones…';try{const img=new Image();img.src=facePhotoData;await new Promise((res,rej)=>{img.onload=res;img.onerror=()=>rej(Error('No se pudo abrir la foto'))});const modes=['walk','swim','car','road'];for(const m of modes){pendingImages[m]=makeLocalAvatar(img,m);removeSavedImages[m]=false;GAMECFG.images[m]=true;const cap=m==='walk'?'Caminar':m==='swim'?'Nadar':m==='car'?'Conducir':'Carrera';let box=document.querySelector('#generatedAvatarPreviews [data-preview="'+m+'"]');if(!box){box=document.createElement('div');box.className='player-image-preview';box.dataset.preview=m;box.title=cap;$('#generatedAvatarPreviews').appendChild(box)}box.innerHTML='';const preview=document.createElement('img');preview.src=pendingImages[m];preview.alt=cap;box.appendChild(preview)}$('#playerCharacter').value='';status.textContent='¡Listo! Se crearon 4 personajes usando la foto. Pulsa «Guardar preferencias» para aplicarlos.'}catch(err){console.error(err);status.textContent='No se pudieron crear los personajes. Prueba con otra foto.'}});
